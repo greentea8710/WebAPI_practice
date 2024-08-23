@@ -9,20 +9,17 @@ namespace WebAPIBasic.Models.Shared
     public class DtoPageRequest
     {
 
-
         /// <summary>
         /// 页码
         /// </summary>
         public int PageNum { get; set; } = 1;
 
 
-
         /// <summary>
         /// 单页数量
-        /// </summary>
+        /// </summary> 
         [Range(1, 100)]
         public int PageSize { get; set; } = 20;
-
 
 
         /// <summary>

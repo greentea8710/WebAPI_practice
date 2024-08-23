@@ -9,7 +9,6 @@
     public class DtoPageList<T>
     {
 
-
         /// <summary>
         /// 数据总量
         /// </summary>
@@ -23,6 +22,8 @@
         /// </summary>
         public List<T>? List { get; set; }
 
+        //T 代表一個數據類型，但類型是甚麼我們不知道，在使用時才會知道
+        //List<T>:T這個未知類型的集合
 
     }
 }
