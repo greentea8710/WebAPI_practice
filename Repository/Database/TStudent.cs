@@ -13,6 +13,14 @@ namespace Repository.Database
     /// </summary>
     public class TStudent : CUD
     {
+
+        // 一對一: 一個學生對到一個班級
+        public long ClassId { get; set; }
+
+        public virtual TClass Class { get; set; }
+
+
+
         /// <summary>
         /// 姓名
         /// </summary>

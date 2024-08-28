@@ -26,6 +26,9 @@ namespace Repository.Database
 
 
 
+        public DbSet<TClass> TClass { get; set; }
+
+
         public DbSet<TDataUpdateLog> TDataUpdateLog { get; set; }
 
 

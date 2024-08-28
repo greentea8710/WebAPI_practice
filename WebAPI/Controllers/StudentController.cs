@@ -29,6 +29,7 @@ namespace WebAPI.Controllers
         }
 
 
+
         //查詢(列出)所有資料
         [HttpGet]
         public DtoPageList<DtoStudent> GetStudentList([FromQuery] DtoGetStudentRequest request)
@@ -76,7 +77,10 @@ namespace WebAPI.Controllers
                 Gender = t.Gender,
                 Phone = t.Phone,
                 Number = t.Number,
-                CreateTime = t.CreateTime
+                CreateTime = t.CreateTime,
+                ClassId = t.ClassId,
+                ClassName = t.Class.Name,
+                ClassCreateTime=t.Class.CreateTime
             }).Skip(request.Skip()).Take(request.PageSize).ToList();
             //假設一頁100條數據，若要查詢第七頁，要skip 600 條數據，才能顯示第七頁的601~700的數據
 
