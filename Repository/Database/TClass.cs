@@ -15,6 +15,11 @@ namespace Repository.Database
 
         public string Name { get; set; }
 
+
+        public string Grade { get; set; }
+
+
+
         //一對多:一個班級對到多個學生
 
         public virtual List<TStudent> Students { get; set; }

@@ -47,6 +47,11 @@ namespace WebAPI.Models.Student
 
 
 
+
+        public string Grade { get; set; }
+
+
+
         public DateTimeOffset ClassCreateTime { get; set; }
 
 

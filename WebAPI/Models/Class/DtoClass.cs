@@ -25,5 +25,10 @@
 
 
 
+        public string Grade {  get; set; }
+
+
+
+
     }
 }
