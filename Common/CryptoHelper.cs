@@ -605,12 +605,14 @@ namespace Common
         /// <returns></returns>
         public static string RSAEncrypt(string publicKey, string content, string stringEncoding, RSAEncryptionPadding encryptionPadding)
         {
+
             publicKey = publicKey.Replace("\n", "").Replace("\r", "");
 
             if (publicKey.StartsWith('-') && publicKey.EndsWith('-'))
             {
                 publicKey = publicKey.Split("-").ToList().OrderByDescending(t => t.Length).First();
             }
+            
 
             using var rsa = RSA.Create();
 
@@ -644,7 +646,6 @@ namespace Common
                 throw new Exception("RSA 初始化失败");
             }
         }
-
 
 
         /// <summary>
