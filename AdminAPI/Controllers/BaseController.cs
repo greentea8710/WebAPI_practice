@@ -10,7 +10,7 @@ namespace AdminAPI.Controllers
     /// <summary>
     /// 系统基础方法控制器
     /// </summary>
-    [SignVerifyFilter]
+    
     [Route("[controller]/[action]")]
     [ApiController]
     public class BaseController(DatabaseContext db, IdService idService) : ControllerBase

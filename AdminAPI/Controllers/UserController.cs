@@ -20,7 +20,7 @@ namespace AdminAPI.Controllers
     /// <summary>
     /// 用户数据操作控制器
     /// </summary>
-    [SignVerifyFilter]
+    
     [Route("[controller]/[action]")]
     [Authorize]
     [ApiController]
@@ -87,6 +87,7 @@ namespace AdminAPI.Controllers
         /// </summary>
         /// <param name="userId">用户ID</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         public DtoUser? GetUser(long? userId)
         {
@@ -114,6 +115,7 @@ namespace AdminAPI.Controllers
         /// </summary>
         /// <param name="createUser"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         public long? CreateUser(DtoEditUser createUser)
         {
@@ -137,7 +139,7 @@ namespace AdminAPI.Controllers
                             Phone = createUser.Phone
                         };
                         user.Password = Convert.ToBase64String(KeyDerivation.Pbkdf2(createUser.Password, Encoding.UTF8.GetBytes(user.Id.ToString()), KeyDerivationPrf.HMACSHA256, 1000, 32));
-                        user.CreateUserId = userId;
+                        //user.CreateUserId = userId;
 
                         user.Email = createUser.Email;
 

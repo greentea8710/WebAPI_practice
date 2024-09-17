@@ -87,7 +87,7 @@ namespace AdminAPI.Controllers
         /// 获取授权功能列表
         /// </summary>
         /// <returns></returns>
-        [SignVerifyFilter]
+        
         [Authorize]
         [HttpGet]
         public List<string> GetFunctionList()

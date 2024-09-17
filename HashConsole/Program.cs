@@ -30,8 +30,8 @@ namespace HashConsole
             string name = "呂璇";
 
             //常用的Hash
-            string md5Hash=CryptoHelper.MD5HashData(name);
-            string sha1Hash=CryptoHelper.SHA1HashData(name);
+            string md5Hash = CryptoHelper.MD5HashData(name);
+            string sha1Hash = CryptoHelper.SHA1HashData(name);
             string sha256Hash = CryptoHelper.SHA256HashData(name);
             string sha384Hash = CryptoHelper.SHA384HashData(name);
             string sha512Hash = CryptoHelper.SHA512HashData(name);
@@ -54,7 +54,7 @@ namespace HashConsole
             string hmacSHA1 = CryptoHelper.HMACSHA1HashData(name, "1234");
             string hmacSHA384 = CryptoHelper.HMACSHA384HashData(name, "1234");
             string hmacSHA512 = CryptoHelper.HMACSHA512HashData(name, "1234");
-            
+
             //與上面 int sha384、sha512比較長度=>結論：長度相同
             int HMACsha384 = hmacSHA384.Count();  //96
             int HMACsha512 = hmacSHA512.Count();  //128
@@ -68,7 +68,7 @@ namespace HashConsole
             //====================================   AesEncrypt、AesDecrypt   ====================================
 
             // 16位采用Aes128、base64
-            string privateKey_1 = "1234567890abcdef"; 
+            string privateKey_1 = "1234567890abcdef";
             string _AesEn = CryptoHelper.AesEncrypt(name, privateKey_1, "base64");
             string myName = CryptoHelper.AesDecrypt(_AesEn, privateKey_1, "base64");
 
@@ -132,23 +132,37 @@ namespace HashConsole
 
             //使用在線生成公私鑰
 
+            RSA rsa = RSA.Create();
+            string rsaPrivateKey = rsa.ExportRSAPrivateKeyPem();
+            string rsaPublicKey = rsa.ExportRSAPublicKeyPem();
+
+
             //RSAEncrypt
-            string _publicKey = "-----BEGIN RSA PUBLIC KEY-----\r\nMEgCQQDW8AZgTfrHzTwqM3TkTnzkmjFZLxXBYPKXZrY8kPNysw4h1vPqSK38xWQH\r\nAImnpsz3KTCWCHr0hn4SGmiywJaTAgMBAAE=\r\n-----END RSA PUBLIC KEY-----";
             string content = "需要加密的數據";
             string stringEncoding = "base64"; // 可以是 "base64" 或 "hex"
             RSAEncryptionPadding padding = RSAEncryptionPadding.Pkcs1; // 選擇加密填充模式為Pkcs1
-            string encryptedData = CryptoHelper.RSAEncrypt(_publicKey, content, stringEncoding, padding);
+            string encryptedData = CryptoHelper.RSAEncrypt(rsaPublicKey, content, stringEncoding, padding);
 
             //RSADecrypt
-            string _privateKey = "-----BEGIN PRIVATE KEY-----\r\nMIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEA1vAGYE36x808KjN0\r\n5E585JoxWS8VwWDyl2a2PJDzcrMOIdbz6kit/MVkBwCJp6bM9ykwlgh69IZ+Ehpo\r\nssCWkwIDAQABAkBXNk1gBkQbjks7VGW5vZ8vouEjLtfE/3FvvV10ddxSTVam2TN+\r\n3wxQ5mu4sH7Q5J/Pu7kL1gpdswJlduyCsI0BAiEA77bzgf5OokJMaaY3SHmixLtW\r\n7L7RMw9Kpk5EBL6W/RcCIQDliiiBZrcWqkXfRvIAKkkveD6eVpvNtm769OI7Wdn3\r\n5QIhANaPhv3/xhpuBT87S5hPZ2V32aImWdG+Ci85NqCYh0UZAiBtoGJgCvJ+fKwK\r\nSxPhSFDTvxYJAUxAH1U5viMePXeAkQIhAJ/IHaH1qXkWC7bzBvUw03iR7vAlEPTh\r\n8Wwo2oR/ufHs\r\n-----END PRIVATE KEY-----";
-            string decryptedData = CryptoHelper.RSADecrypt(_privateKey, encryptedData, stringEncoding, padding);
+            string decryptedData = CryptoHelper.RSADecrypt(rsaPrivateKey, encryptedData, stringEncoding, padding);
 
 
             //========================================  RSASignData 、 RSAVerifyData  ==========================================
 
+            string content_Sign = "需要簽名的內容";
+            string stringEncoding_Sign = "base64"; // 或者"hex"
+            HashAlgorithmName hashAlgorithm_Sign = HashAlgorithmName.SHA256;
+            RSASignaturePadding signaturePadding = RSASignaturePadding.Pkcs1;
+
+            //簽名計算
+            string signedData = CryptoHelper.RSASignData(rsaPrivateKey, content_Sign, stringEncoding_Sign, hashAlgorithm_Sign, signaturePadding);
+
+            //簽名驗證
+            bool verifiedData = CryptoHelper.RSAVerifyData(rsaPublicKey, content_Sign, signedData, stringEncoding_Sign, hashAlgorithm_Sign, signaturePadding);
 
 
-            int stop = 0;
+            Console.ReadLine();
+
         }
 
     }

@@ -16,7 +16,7 @@ namespace AdminAPI.Controllers
     /// <summary>
     /// 文件上传控制器
     /// </summary>
-    [SignVerifyFilter]
+    
     [Authorize]
     [Route("[controller]/[action]")]
     [ApiController]

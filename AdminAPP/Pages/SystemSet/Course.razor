@@ -1,0 +1,201 @@
+﻿@page "/systemset/course"
+@using AdminShared.Models.Course
+@using System.ComponentModel
+@attribute [ReuseTabsPageTitle("班級管理")]
+
+<Layout Style="padding-top:30px;">
+
+    <Content Class="site-layout-background">
+
+        <div style="margin-bottom:10px">
+
+            @if (MainLayout.functionList.Contains("course-add"))
+            {
+                <Button Icon="plus" Type="@ButtonType.Primary" @onclick="()=>EditCourse()">添加</Button>
+            }
+
+        </div>
+        <Table TItem="DtoCourse" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
+
+            <ColumnDefinitions>
+                <Column @bind-Field="@context.Name" Title="名称"></Column>
+                <Column @bind-Field="@context.StudentTotal" Title="學生總數"></Column>
+                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间">
+                </Column>
+                <ActionColumn Title="操作">
+                    <Space>
+
+                        @if (MainLayout.functionList.Contains("link-edit"))
+                        {
+                            <SpaceItem>
+                                <a @onclick="()=>EditCourse(context)">编辑</a>
+                            </SpaceItem>
+                        }
+
+                        @if (MainLayout.functionList.Contains("link-delete"))
+                        {
+                            <SpaceItem>
+                                <Popconfirm Title="确认要删除吗？"
+                                            OnConfirm="_=>DeleteCourse(context.Id)"
+                                            OkText="Yes"
+                                            CancelText="No">
+                                    <a style="color:red">删除</a>
+                                </Popconfirm>
+
+                            </SpaceItem>
+                        }
+
+                    </Space>
+                </ActionColumn>
+            </ColumnDefinitions>
+
+            <PaginationTemplate>
+                <div style="margin:15px 0;float:right">
+                    <Pagination Total="@pageList.Total" PageSize="pageSize" Current="pageNum" ShowSizeChanger OnChange="PageChange" ShowQuickJumper ShowTotal="showTotal" />
+                </div>
+            </PaginationTemplate>
+
+        </Table>
+
+    </Content>
+</Layout>
+
+
+<Drawer Closable="true" Width="380" Visible="isShowEditCourse" Title='("友情链接信息")' OnClose="()=>isShowEditCourse=false">
+    <Template style="height:90%">
+
+        <Form Model="@editCourse" OnFinish="SaveCourse">
+
+            <FormItem>
+                <Text>名称</Text>
+                <Input Placeholder="请输入名称" @bind-Value="@context.Name" />
+            </FormItem>
+
+          
+
+            <Row Gutter="24">
+                <AntDesign.Col Span="24">
+                    <div style="float:right">
+                        <Button Type="@ButtonType.Primary" HtmlType="submit" Loading="@saveLoading">保存</Button>
+                        <Button Type="@ButtonType.Default" @onclick="()=>isShowEditCourse=false">取消</Button>
+                    </div>
+                </AntDesign.Col>
+            </Row>
+        </Form>
+    </Template>
+</Drawer>
+
+
+@code {
+
+    override protected void OnInitialized()
+    {
+        GetCourseList();
+    }
+
+    bool saveLoading = false;
+    bool tableLoading = false;
+    int pageNum = 1;
+    int pageSize = 10;
+
+    DtoPageList<DtoCourse> pageList = new();
+
+    async void GetCourseList()
+    {
+        tableLoading = true;
+        var retData = await Http.GetFromJsonAsync<DtoPageList<DtoCourse>>("Course/GetCourseList?pageNum=" + pageNum + "&pageSize=" + pageSize);
+
+        if (retData != null)
+        {
+            pageList = retData;
+        }
+
+        tableLoading = false;
+        StateHasChanged();
+    }
+
+    void PageChange(PaginationEventArgs args)
+    {
+        if (pageNum != args.Page)
+        {
+            pageNum = args.Page;
+        }
+
+        if (pageSize != args.PageSize)
+        {
+            pageSize = args.PageSize;
+        }
+
+        GetCourseList();
+    }
+
+    Func<PaginationTotalContext, string> showTotal = pageList => $"共 {pageList.Total} 条";
+
+
+    bool isShowEditCourse = false;
+
+    long courseId;
+    DtoEditCourse editCourse = new();
+
+    void EditCourse(DtoCourse? course = null)
+    {
+        courseId = default;
+        editCourse = new DtoEditCourse();
+
+        if (course != null)
+        {
+            courseId = course.Id;
+            editCourse.Name = course.Name;
+        }
+
+        isShowEditCourse = true;
+
+        StateHasChanged();
+    }
+
+    async void SaveCourse()
+    {
+        saveLoading = true;
+        if (courseId == default)
+        {
+            using (var httpResponse = await Http.PostAsJsonAsync<DtoEditCourse>("Link/CreateCourse", editCourse))
+            {
+                var createCourseId = httpResponse.Content.ReadAsStringAsync().Result;
+
+                Message.Success("添加成功");
+            }
+        }
+        else
+        {
+            using (var httpResponse = await Http.PostAsJsonAsync<DtoEditCourse>("Course/UpdateCourse?courseId=" + courseId, editCourse))
+            {
+                var updateCourseRet = httpResponse.Content.ReadAsStringAsync().Result;
+
+                if (bool.Parse(updateCourseRet))
+                {
+                    Message.Success("编辑成功");
+                }
+            }
+        }
+        saveLoading = false;
+
+        GetCourseList();
+        isShowEditCourse = false;
+    }
+
+
+    async void DeleteCourse(long linkId)
+    {
+        using (var httpResponse = await Http.DeleteAsync("Course/DeleteCourse?id=" + courseId))
+        {
+            var retValue = httpResponse.Content.ReadAsStringAsync().Result;
+
+            if (Convert.ToBoolean(retValue))
+            {
+                GetCourseList();
+                Message.Success("删除成功");
+            }
+        }
+    }
+
+}

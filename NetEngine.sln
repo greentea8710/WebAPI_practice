@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentifierGenerator", "Iden
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPIBasic", "WebAPIBasic\WebAPIBasic.csproj", "{9D5B8B25-CF9C-4179-9595-2F461F1049CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashConsole", "HashConsole\HashConsole.csproj", "{1BC8EA02-E60D-46BC-A32A-FC905B326C96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HashConsole", "HashConsole\HashConsole.csproj", "{1BC8EA02-E60D-46BC-A32A-FC905B326C96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,7 +12,7 @@ namespace AdminAPI.Controllers
     /// <summary>
     /// 站点控制器
     /// </summary>
-    [SignVerifyFilter]
+    
     [Authorize]
     [Route("[controller]/[action]")]
     [ApiController]

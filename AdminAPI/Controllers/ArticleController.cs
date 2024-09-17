@@ -11,7 +11,7 @@ using WebAPIBasic.Libraries;
 
 namespace AdminAPI.Controllers
 {
-    [SignVerifyFilter]
+    
     [Route("[controller]/[action]")]
     [Authorize]
     [ApiController]
