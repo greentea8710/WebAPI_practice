@@ -22,6 +22,13 @@ namespace AdminShared.Models.Course
 
 
         /// <summary>
+        /// 網址
+        /// </summary>
+        public string? Url { get; set; }
+
+
+
+        /// <summary>
         /// 學生總數
         /// </summary>
         public int StudentTotal { get; set; }

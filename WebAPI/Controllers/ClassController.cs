@@ -7,6 +7,7 @@ using Common;
 using WebAPIBasic.Models.Shared;
 using WebAPI.Models.Student;
 using DistributedLock;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
@@ -22,6 +23,7 @@ namespace WebAPI.Controllers
 
 
     [Route("[controller]/[action]")]
+    [Authorize]
     [ApiController]
     public class classController : ControllerBase
     {
@@ -42,6 +44,7 @@ namespace WebAPI.Controllers
 
         //獲取(查詢)班級訊息的一個API
         [HttpGet]
+        [AllowAnonymous]
         public DtoClass GetClass(long id)
         { 
             var info = db.TClass.Where(t => t.Id == id).Select(t => new DtoClass 

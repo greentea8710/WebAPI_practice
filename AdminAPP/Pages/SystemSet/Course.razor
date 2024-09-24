@@ -1,6 +1,7 @@
 ﻿@page "/systemset/course"
 @using AdminShared.Models.Course
 @using System.ComponentModel
+@using System.Text.Json
 @attribute [ReuseTabsPageTitle("班級管理")]
 
 <Layout Style="padding-top:30px;">
@@ -9,41 +10,41 @@
 
         <div style="margin-bottom:10px">
 
-            @if (MainLayout.functionList.Contains("course-add"))
-            {
-                <Button Icon="plus" Type="@ButtonType.Primary" @onclick="()=>EditCourse()">添加</Button>
-            }
+
+            <Button Icon="plus" Type="@ButtonType.Primary" @onclick="()=>EditCourse()">添加</Button>
+
 
         </div>
         <Table TItem="DtoCourse" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
 
             <ColumnDefinitions>
-                <Column @bind-Field="@context.Name" Title="名称"></Column>
+                <Column @bind-Field="@context.Name" Title="課程名称"></Column>
                 <Column @bind-Field="@context.StudentTotal" Title="學生總數"></Column>
+                <Column @bind-Field="@context.MaleStudentTotal" Title="男性人數"></Column>
+                <Column @bind-Field="@context.FemaleStudentTotal" Title="女性人數"></Column>
+                <Column @bind-Field="@context.Grade" Title="年級"></Column>
                 <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间">
                 </Column>
                 <ActionColumn Title="操作">
                     <Space>
 
-                        @if (MainLayout.functionList.Contains("link-edit"))
-                        {
-                            <SpaceItem>
-                                <a @onclick="()=>EditCourse(context)">编辑</a>
-                            </SpaceItem>
-                        }
 
-                        @if (MainLayout.functionList.Contains("link-delete"))
-                        {
-                            <SpaceItem>
-                                <Popconfirm Title="确认要删除吗？"
-                                            OnConfirm="_=>DeleteCourse(context.Id)"
-                                            OkText="Yes"
-                                            CancelText="No">
-                                    <a style="color:red">删除</a>
-                                </Popconfirm>
+                        <SpaceItem>
+                            <a @onclick="()=>EditCourse(context)">编辑</a>
+                        </SpaceItem>
 
-                            </SpaceItem>
-                        }
+
+
+                        <SpaceItem>
+                            <Popconfirm Title="确认要删除吗？"
+                                        OnConfirm="_=>DeleteCourse(context.Id)"
+                                        OkText="Yes"
+                                        CancelText="No">
+                                <a style="color:red">删除</a>
+                            </Popconfirm>
+
+                        </SpaceItem>
+
 
                     </Space>
                 </ActionColumn>
@@ -61,7 +62,7 @@
 </Layout>
 
 
-<Drawer Closable="true" Width="380" Visible="isShowEditCourse" Title='("友情链接信息")' OnClose="()=>isShowEditCourse=false">
+<Drawer Closable="true" Width="380" Visible="isShowEditCourse" Title='("班級管理信息")' OnClose="()=>isShowEditCourse=false">
     <Template style="height:90%">
 
         <Form Model="@editCourse" OnFinish="SaveCourse">
@@ -71,7 +72,27 @@
                 <Input Placeholder="请输入名称" @bind-Value="@context.Name" />
             </FormItem>
 
-          
+            <FormItem>
+                <Text>學生總數</Text>
+                <Input Placeholder="请输入學生總數" @bind-Value="@context.StudentTotal" />
+            </FormItem>
+
+            <FormItem>
+                <Text>男性人數</Text>
+                <Input Placeholder="请输入男性人數" @bind-Value="@context.MaleStudentTotal" />
+            </FormItem>
+
+            <FormItem>
+                <Text>女性人數</Text>
+                <Input Placeholder="请输入女性人數" @bind-Value="@context.FemaleStudentTotal" />
+            </FormItem>
+
+            <FormItem>
+                <Text>年級</Text>
+                <Input Placeholder="请输入年級" @bind-Value="@context.Grade" />
+            </FormItem>
+
+
 
             <Row Gutter="24">
                 <AntDesign.Col Span="24">
@@ -112,7 +133,11 @@
 
         tableLoading = false;
         StateHasChanged();
+
     }
+
+
+
 
     void PageChange(PaginationEventArgs args)
     {
@@ -146,6 +171,9 @@
         {
             courseId = course.Id;
             editCourse.Name = course.Name;
+            editCourse.StudentTotal = course.StudentTotal;
+            editCourse.MaleStudentTotal = course.MaleStudentTotal;
+            editCourse.FemaleStudentTotal = course.FemaleStudentTotal;     
         }
 
         isShowEditCourse = true;
@@ -158,7 +186,7 @@
         saveLoading = true;
         if (courseId == default)
         {
-            using (var httpResponse = await Http.PostAsJsonAsync<DtoEditCourse>("Link/CreateCourse", editCourse))
+            using (var httpResponse = await Http.PostAsJsonAsync<DtoEditCourse>("Course/CreateCourse", editCourse))
             {
                 var createCourseId = httpResponse.Content.ReadAsStringAsync().Result;
 
@@ -184,7 +212,7 @@
     }
 
 
-    async void DeleteCourse(long linkId)
+    async void DeleteCourse(long courseId)
     {
         using (var httpResponse = await Http.DeleteAsync("Course/DeleteCourse?id=" + courseId))
         {
@@ -196,6 +224,7 @@
                 Message.Success("删除成功");
             }
         }
+
     }
 
 }

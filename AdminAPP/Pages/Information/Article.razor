@@ -12,10 +12,9 @@
 
         <div style="margin-bottom:10px">
 
-            @if (MainLayout.functionList.Contains("article-add"))
-            {
+           
                 <Button Icon="plus" Type="@ButtonType.Primary" OnClick="()=>EditArticle()">添加</Button>
-            }
+           
 
         </div>
         <Table TItem="DtoArticle" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
@@ -30,16 +29,13 @@
                 <ActionColumn Title="操作">
                     <Space>
 
-                        @if (MainLayout.functionList.Contains("article-edit"))
-                        {
+                       
 
                             <SpaceItem>
                                 <a @onclick="()=>EditArticle(context)">编辑</a>
                             </SpaceItem>
-                        }
+                       
 
-                        @if (MainLayout.functionList.Contains("article-delete"))
-                        {
                             <SpaceItem>
                                 <Popconfirm Title="确认要删除吗？"
                                             OnConfirm="_=>DeleteArticle(context.Id)"
@@ -49,7 +45,7 @@
                                 </Popconfirm>
 
                             </SpaceItem>
-                        }
+                      
 
                     </Space>
                 </ActionColumn>

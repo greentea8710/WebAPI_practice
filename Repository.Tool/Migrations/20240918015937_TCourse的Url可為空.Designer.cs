@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Repository.Database;
@@ -11,9 +12,11 @@ using Repository.Database;
 namespace Repository.Tool.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240918015937_TCourse的Url可為空")]
+    partial class TCourse的Url可為空
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -300,39 +303,33 @@ namespace Repository.Tool.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasComment("创建时间");
 
-                    b.Property<long?>("CreateUserId")
-                        .HasColumnType("bigint")
-                        .HasComment("创建人ID");
-
                     b.Property<DateTimeOffset?>("DeleteTime")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("删除时间");
 
-                    b.Property<long?>("DeleteUserId")
-                        .HasColumnType("bigint")
-                        .HasComment("删除人ID");
-
-                    b.Property<int>("FemaleStudentTotal")
-                        .HasColumnType("integer")
-                        .HasComment("女性人數");
+                    b.Property<string>("FemaleStudentTotal")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasComment("FemaleStudentTotal");
 
                     b.Property<string>("Grade")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasComment("年級");
+                        .HasComment("Grade");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean")
                         .HasComment("是否删除");
 
-                    b.Property<int>("MaleStudentTotal")
-                        .HasColumnType("integer")
-                        .HasComment("男性人數");
+                    b.Property<string>("MaleStudentTotal")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasComment("MaleStudentTotal");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasComment("班級名称");
+                        .HasComment("角色名称");
 
                     b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
@@ -341,35 +338,24 @@ namespace Repository.Tool.Migrations
                         .HasColumnName("xmin")
                         .HasComment("行版本标记");
 
-                    b.Property<int>("StudentTotal")
-                        .HasColumnType("integer")
-                        .HasComment("學生總數");
+                    b.Property<string>("StudentTotal")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasComment("StudentTotal");
 
-                    b.Property<DateTimeOffset?>("UpdateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasComment("更新时间");
-
-                    b.Property<long?>("UpdateUserId")
-                        .HasColumnType("bigint")
-                        .HasComment("编辑人ID");
+                    b.Property<string>("Url")
+                        .HasColumnType("text")
+                        .HasComment("Url");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreateTime");
 
-                    b.HasIndex("CreateUserId");
-
                     b.HasIndex("DeleteTime");
-
-                    b.HasIndex("DeleteUserId");
-
-                    b.HasIndex("UpdateTime");
-
-                    b.HasIndex("UpdateUserId");
 
                     b.ToTable("Course", null, t =>
                         {
-                            t.HasComment("班級信息表");
+                            t.HasComment("角色信息表");
                         });
                 });
 
@@ -1975,30 +1961,6 @@ namespace Repository.Tool.Migrations
                     b.Navigation("DeleteUser");
 
                     b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Repository.Database.TCourse", b =>
-                {
-                    b.HasOne("Repository.Database.TUser", "CreateUser")
-                        .WithMany()
-                        .HasForeignKey("CreateUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Repository.Database.TUser", "DeleteUser")
-                        .WithMany()
-                        .HasForeignKey("DeleteUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Repository.Database.TUser", "UpdateUser")
-                        .WithMany()
-                        .HasForeignKey("UpdateUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreateUser");
-
-                    b.Navigation("DeleteUser");
-
-                    b.Navigation("UpdateUser");
                 });
 
             modelBuilder.Entity("Repository.Database.TDataUpdateLog", b =>

@@ -12,38 +12,42 @@
 
         <Menu Theme="MenuTheme.Dark" DefaultSelectedKeys=@(new[]{"1"}) Mode="MenuMode.Inline">
 
-           
-                <SubMenu TitleTemplate=subArticle>
-                    
-                        <MenuItem><a href="information/article">文章管理</a></MenuItem>
-                    
 
-                   
-                        <MenuItem> <a href="information/category">栏目管理</a></MenuItem>
-                    
-                </SubMenu>
-            
+            <SubMenu TitleTemplate=subArticle>
 
-                <SubMenu TitleTemplate=subSystemSet>
-                   
-                    
-                        <MenuItem><a href="systemset/user">用户管理</a></MenuItem>
-                    
+                <MenuItem><a href="information/article">文章管理</a></MenuItem>
 
-                   
-                    
-                        <MenuItem><a href="systemset/role">角色管理</a></MenuItem>
-                    
 
-                    
-                        <MenuItem><a href="systemset/link">友链管理</a></MenuItem>
-                    
 
-                   
-                        <MenuItem><a href="systemset/site">信息维护</a></MenuItem>
-                    
-                </SubMenu>
-            
+                <MenuItem> <a href="information/category">栏目管理</a></MenuItem>
+
+            </SubMenu>
+
+
+            <SubMenu TitleTemplate=subSystemSet>
+
+
+                <MenuItem><a href="systemset/user">用户管理</a></MenuItem>
+
+
+
+
+                <MenuItem><a href="systemset/role">角色管理</a></MenuItem>
+
+
+
+                <MenuItem><a href="systemset/link">友链管理</a></MenuItem>
+
+
+
+                <MenuItem><a href="systemset/site">信息维护</a></MenuItem>
+
+
+
+                <MenuItem><a href="systemset/course">班級管理</a></MenuItem>
+
+            </SubMenu>
+
 
         </Menu>
     </Sider>
@@ -86,11 +90,15 @@
 @code {
     string leftLayoutStyle = "margin-left:200px";
 
+
+
     RenderFragment subSystemSet =
     @<span>
         <Icon Type="control" Theme="outline" />
         <span>系统设置</span>
     </span>;
+
+
 
     RenderFragment subArticle =
     @<span>
@@ -99,94 +107,184 @@
     </span>
     ;
 
+
+
     bool collapsed;
 
+
+
     void onCollapse(bool collapsed)
+
     {
+
         if (collapsed)
+
         {
+
             leftLayoutStyle = "margin-left:80px";
 
+
+
         }
+
         else
+
         {
+
             leftLayoutStyle = "margin-left:200px";
 
+
+
         }
 
+
+
         this.collapsed = collapsed;
+
     }
+
+
 
     public static DtoUser user = new();
 
 
+
+
+
     override protected void OnInitialized()
+
     {
+
         Authentication();
+
         GetFunctionList();
+
     }
+
+
 
     public static List<string> functionList = new();
 
 
+
+
+
     async void GetFunctionList()
+
     {
+
         var retList = await Http.GetFromJsonAsync<List<string>>("Authorize/GetFunctionList");
 
+
+
         if (retList != null)
+
         {
+
             functionList = retList;
 
+
+
             StateHasChanged();
+
         }
+
     }
+
+
+
+
+
 
 
 
 
     private async void Authentication()
+
     {
+
         var authorization = LocalStorage.GetItemAsString("Authorization");
 
+
+
         if (string.IsNullOrEmpty(authorization))
+
         {
+
             NavigationManager.NavigateTo("login");
+
         }
+
         else
+
         {
+
             JsonWebToken jsonWebToken = new(authorization);
+
+
 
             var expTimeL = Convert.ToInt64(jsonWebToken.GetClaim("exp").Value);
 
+
+
             var expTime = TimeZoneInfo.ConvertTimeToUtc((new DateTime(1970, 1, 1)).ToLocalTime()).ToLocalTime().AddSeconds(expTimeL);
 
+
+
             if (expTime < DateTime.UtcNow)
+
             {
+
                 NavigationManager.NavigateTo("login");
+
             }
+
             else
+
             {
+
                 try
+
                 {
+
                     user = (await Http.GetFromJsonAsync<DtoUser>("User/GetUser"))!;
-                }
-                catch
-                {
-                    LocalStorage.RemoveItem("Authorization");
-                    NavigationManager.NavigateTo("login");
+
                 }
 
+                catch
+
+                {
+
+                    LocalStorage.RemoveItem("Authorization");
+
+                    NavigationManager.NavigateTo("login");
+
+                }
+
+
+
                 StateHasChanged();
+
             }
+
         }
+
     }
 
 
+
+
+
     private void Logout()
+
     {
+
         LocalStorage.RemoveItem("Authorization");
 
+
+
         NavigationManager.NavigateTo("login");
+
     }
 
 }
