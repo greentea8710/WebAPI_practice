@@ -1,0 +1,236 @@
+﻿@page "/systemset/student"
+@using AdminShared.Models.Student
+@using System.ComponentModel
+@using System.Text.Json
+@attribute [ReuseTabsPageTitle("學生管理")]
+
+<Layout Style="padding-top:30px;">
+
+    <Content Class="site-layout-background">
+
+        <div style="margin-bottom:10px">
+
+
+            <Button Icon="plus" Type="@ButtonType.Primary" @onclick="()=>EditStudent()">添加</Button>
+
+
+        </div>
+        <Table TItem="DtoStudent" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
+
+            <ColumnDefinitions>
+                <Column @bind-Field="@context.Name" Title="學生名称"></Column>
+                <Column @bind-Field="@context.Number" Title="座號"></Column>
+                <Column @bind-Field="@context.Phone" Title="電話"></Column>
+                <Column @bind-Field="@context.Gender" Title="性別"></Column>
+                @* <Column @bind-Field="@context.Course.Name" Title="班級"></Column> *@
+                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间">
+                </Column>
+                <ActionColumn Title="操作">
+
+
+                    <Space>
+
+
+                        <SpaceItem>
+                            <a @onclick="()=>EditStudent(context)">编辑</a>
+                        </SpaceItem>
+
+
+
+                        <SpaceItem>
+                            <Popconfirm Title="确认要删除吗？"
+                                        OnConfirm="_=>DeleteStudent(context.Id)"
+                                        OkText="Yes"
+                                        CancelText="No">
+                                <a style="color:red">删除</a>
+                            </Popconfirm>
+
+                        </SpaceItem>
+
+
+                    </Space>
+
+
+
+                </ActionColumn>
+            </ColumnDefinitions>
+
+            <PaginationTemplate>
+                <div style="margin:15px 0;float:right">
+                    <Pagination Total="@pageList.Total" PageSize="pageSize" Current="pageNum" ShowSizeChanger OnChange="PageChange" ShowQuickJumper ShowTotal="showTotal" />
+                </div>
+            </PaginationTemplate>
+
+        </Table>
+
+    </Content>
+</Layout>
+
+
+<Drawer Closable="true" Width="380" Visible="isShowEditStudent" Title='("學生管理信息")' OnClose="()=>isShowEditStudent=false">
+    <Template style="height:90%">
+
+        <Form Model="@editStudent" OnFinish="SaveStudent">
+
+            <FormItem>
+                <Text>學生名称</Text>
+                <Input Placeholder="请输入學生名称" @bind-Value="@context.Name" />
+            </FormItem>
+
+            <FormItem>
+                <Text>座號</Text>
+                <Input Placeholder="请输入座號" @bind-Value="@context.Number" />
+            </FormItem>
+
+            <FormItem>
+                <Text>電話</Text>
+                <Input Placeholder="请输入電話" @bind-Value="@context.Phone" />
+            </FormItem>
+
+            <FormItem>
+                <Text>性別</Text>
+                <Input Placeholder="请输入性別" @bind-Value="@context.Gender" />
+            </FormItem>
+            @* 
+            <FormItem>
+                <Text>班級</Text>
+                <Input Placeholder="请输入班級" @bind-Value="@context.Course" />
+            </FormItem> *@
+
+
+
+            <Row Gutter="24">
+                <AntDesign.Col Span="24">
+                    <div style="float:right">
+                        <Button Type="@ButtonType.Primary" HtmlType="submit" Loading="@saveLoading">保存</Button>
+                        <Button Type="@ButtonType.Default" @onclick="()=>isShowEditStudent=false">取消</Button>
+                    </div>
+                </AntDesign.Col>
+            </Row>
+        </Form>
+    </Template>
+</Drawer>
+
+
+@code {
+
+    override protected void OnInitialized()
+    {
+        GetStudentList();
+    }
+
+    bool saveLoading = false;
+    bool tableLoading = false;
+    int pageNum = 1;
+    int pageSize = 10;
+
+    DtoPageList<DtoStudent> pageList = new();
+
+    async void GetStudentList()
+    {
+        tableLoading = true;
+        var retData = await Http.GetFromJsonAsync<DtoPageList<DtoStudent>>("Student/GetStudentList?pageNum=" + pageNum + "&pageSize=" + pageSize);
+
+        if (retData != null)
+        {
+            pageList = retData;
+        }
+
+        tableLoading = false;
+        StateHasChanged();
+
+    }
+
+
+
+
+    void PageChange(PaginationEventArgs args)
+    {
+        if (pageNum != args.Page)
+        {
+            pageNum = args.Page;
+        }
+
+        if (pageSize != args.PageSize)
+        {
+            pageSize = args.PageSize;
+        }
+
+        GetStudentList();
+    }
+
+    Func<PaginationTotalContext, string> showTotal = pageList => $"共 {pageList.Total} 条";
+
+
+    bool isShowEditStudent = false;
+
+    long studentId;
+    DtoEditStudent editStudent = new();
+
+    void EditStudent(DtoStudent? student = null)
+    {
+        studentId = default;
+        editStudent = new DtoEditStudent();
+
+        if (student != null)
+        {
+            studentId = student.Id;
+            editStudent.Name = student.Name;
+            editStudent.Number = student.Number;
+            editStudent.Phone = student.Phone;
+            editStudent.Gender = student.Gender;
+            //editStudent.CourseId = student.CourseId;
+        }
+
+        isShowEditStudent = true;
+
+        StateHasChanged();
+    }
+
+    async void SaveStudent()
+    {
+        saveLoading = true;
+        if (studentId == default)
+        {
+            using (var httpResponse = await Http.PostAsJsonAsync<DtoEditStudent>("Student/CreateStudent", editStudent))
+            {
+                var createStudentId = httpResponse.Content.ReadAsStringAsync().Result;
+
+                Message.Success("添加成功");
+            }
+        }
+        else
+        {
+            using (var httpResponse = await Http.PostAsJsonAsync<DtoEditStudent>("Student/UpdateStudent?studentId=" + studentId, editStudent))
+            {
+                var updateStudentRet = httpResponse.Content.ReadAsStringAsync().Result;
+
+                if (bool.Parse(updateStudentRet))
+                {
+                    Message.Success("编辑成功");
+                }
+            }
+        }
+        saveLoading = false;
+
+        GetStudentList();
+        isShowEditStudent = false;
+    }
+
+
+    async void DeleteStudent(long studentId)
+    {
+        using (var httpResponse = await Http.DeleteAsync("Student/DeleteStudent?id=" + studentId))
+        {
+            var retValue = httpResponse.Content.ReadAsStringAsync().Result;
+
+            if (Convert.ToBoolean(retValue))
+            {
+                GetStudentList();
+                Message.Success("删除成功");
+            }
+        }
+
+    }
+
+}

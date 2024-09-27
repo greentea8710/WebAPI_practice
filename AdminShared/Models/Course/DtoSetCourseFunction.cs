@@ -12,7 +12,7 @@
 
 
         /// <summary>
-        /// 角色ID
+        /// 7ID
         /// </summary>
         public long CourseId { get; set; }
 

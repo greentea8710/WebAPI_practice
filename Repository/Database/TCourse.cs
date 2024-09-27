@@ -45,6 +45,8 @@ namespace Repository.Database
 
 
 
+        //一對多:一個班級對到多個學生
+        public virtual List<TStudent> Students { get; set; }
 
 
     }

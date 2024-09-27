@@ -5,13 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Repository.Attributes;
+using Repository.Database.Bases;
 
 namespace Repository.Database
 {
     /// <summary>
     /// 學生表
     /// </summary>
-    public class TStudent : CUD
+    public class TStudent : CUD_User
     {
 
         // 一對一: 一個學生對到一個班級
@@ -19,6 +21,14 @@ namespace Repository.Database
 
 
         public virtual TClass Class { get; set; }
+
+
+        public long? CourseId { get; set; }
+
+
+        public virtual TCourse Course { get; set; }
+
+
 
 
 

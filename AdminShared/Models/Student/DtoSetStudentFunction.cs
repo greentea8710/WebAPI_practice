@@ -1,6 +1,6 @@
-﻿namespace AdminShared.Models.Course
+﻿namespace AdminShared.Models.Student
 {
-    public class DtoCourseFunction
+    public class DtoSetStudentFunction
     {
 
 
@@ -14,7 +14,7 @@
         /// <summary>
         /// 角色ID
         /// </summary>
-        public long CourseId { get; set; }
+        public long StudentId { get; set; }
 
 
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AdminShared.Models.Student;
+using Repository.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,12 @@ namespace AdminShared.Models.Course
 {
     public class DtoCourse
     {
+
+        public List<DtoStudent> Students { get; set; }
+
+
+
+
 
         /// <summary>
         /// 標示Id
@@ -19,12 +27,6 @@ namespace AdminShared.Models.Course
         /// 課程名稱
         /// </summary>
         public string Name { get; set; }
-
-
-        /// <summary>
-        /// 網址
-        /// </summary>
-        public string? Url { get; set; }
 
 
 

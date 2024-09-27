@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Repository.Database;
@@ -11,9 +12,11 @@ using Repository.Database;
 namespace Repository.Tool.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240926120352_TStudent繼承改為CUD_User")]
+    partial class TStudent繼承改為CUD_User
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1440,10 +1443,6 @@ namespace Repository.Tool.Migrations
                         .HasColumnType("bigint")
                         .HasComment("ClassId");
 
-                    b.Property<long?>("CourseId")
-                        .HasColumnType("bigint")
-                        .HasComment("CourseId");
-
                     b.Property<DateTimeOffset>("CreateTime")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("创建时间");
@@ -1501,8 +1500,6 @@ namespace Repository.Tool.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
-
-                    b.HasIndex("CourseId");
 
                     b.HasIndex("CreateTime");
 
@@ -2253,11 +2250,6 @@ namespace Repository.Tool.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Repository.Database.TCourse", "Course")
-                        .WithMany("Students")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Repository.Database.TUser", "CreateUser")
                         .WithMany()
                         .HasForeignKey("CreateUserId")
@@ -2274,8 +2266,6 @@ namespace Repository.Tool.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Class");
-
-                    b.Navigation("Course");
 
                     b.Navigation("CreateUser");
 
@@ -2425,11 +2415,6 @@ namespace Repository.Tool.Migrations
                 });
 
             modelBuilder.Entity("Repository.Database.TClass", b =>
-                {
-                    b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("Repository.Database.TCourse", b =>
                 {
                     b.Navigation("Students");
                 });
