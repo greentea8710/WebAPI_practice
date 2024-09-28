@@ -37,7 +37,7 @@ namespace AdminShared.Models.Student
         /// <summary>
         /// 學號 
         /// </summary>
-        [Required(ErrorMessage = "姓名不可以空")]
+        [Required(ErrorMessage = "座號不可以空")]
         public string Number { get; set; }
 
 

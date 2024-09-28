@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Repository.Database;
@@ -11,9 +12,11 @@ using Repository.Database;
 namespace Repository.Tool.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240928103639_刪除TClass")]
+    partial class 刪除TClass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1383,7 +1386,7 @@ namespace Repository.Tool.Migrations
                         .HasColumnType("bigint")
                         .HasComment("主键标识ID");
 
-                    b.Property<long>("CourseId")
+                    b.Property<long?>("CourseId")
                         .HasColumnType("bigint")
                         .HasComment("CourseId");
 
@@ -2191,8 +2194,7 @@ namespace Repository.Tool.Migrations
                     b.HasOne("Repository.Database.TCourse", "Course")
                         .WithMany("Students")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Repository.Database.TUser", "CreateUser")
                         .WithMany()

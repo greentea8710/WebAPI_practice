@@ -18,11 +18,11 @@
         <Table TItem="DtoStudent" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
 
             <ColumnDefinitions>
-                <Column @bind-Field="@context.Name" Title="學生名称"></Column>
-                <Column @bind-Field="@context.Number" Title="座號"></Column>
-                <Column @bind-Field="@context.Phone" Title="電話"></Column>
-                <Column @bind-Field="@context.Gender" Title="性別"></Column>
-                @* <Column @bind-Field="@context.Course.Name" Title="班級"></Column> *@
+                <Column Field="@context.Name.SubstringText(30)" Title="學生名称"></Column>
+                <Column Field="@context.Number.SubstringText(30)" Title="座號"></Column>
+                <Column Field="@context.Phone.SubstringText(30)" Title="電話"></Column>
+                <Column Field="@context.Gender" Title="性別"></Column>
+                <PropertyColumn Title="班級" Property="c=>c.Course.Name"></PropertyColumn>
                 <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间">
                 </Column>
                 <ActionColumn Title="操作">
@@ -91,8 +91,8 @@
                 <Text>性別</Text>
                 <Input Placeholder="请输入性別" @bind-Value="@context.Gender" />
             </FormItem>
-            @* 
-            <FormItem>
+            
+       @*      <FormItem>
                 <Text>班級</Text>
                 <Input Placeholder="请输入班級" @bind-Value="@context.Course" />
             </FormItem> *@

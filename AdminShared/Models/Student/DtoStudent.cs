@@ -53,7 +53,7 @@ namespace AdminShared.Models.Student
         /////////////////////////////////////////////////////////////////////////
 
         // 包含班級資訊
-        //public DtoCourse Course { get; set; }
+        public DtoCourse Course { get; set; }
 
 
 

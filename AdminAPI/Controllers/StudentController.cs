@@ -51,7 +51,7 @@ namespace AdminAPI.Controllers
         {
             DtoPageList<DtoStudent> data = new();
 
-            var query = db.TStudent.AsQueryable();
+            var query = db.TStudent.Where(t => t.Course != null);
 
 
             // 加入 Include 來同時載入學生的班級 (Course) 資料
@@ -72,11 +72,11 @@ namespace AdminAPI.Controllers
                 Phone = t.Phone,
                 CreateTime = t.CreateTime,
 
-                //Course = new DtoCourse  // 包含所屬班級資訊
-                //{
-                //    Id = t.Course.Id,
-                //    CourseName = t.Course.Name,
-                //}
+                Course = new DtoCourse  // 包含所屬班級資訊
+                {
+                    Id = t.Course.Id,
+                    Name = t.Course.Name,
+                }
 
             }).Skip(request.Skip()).Take(request.PageSize).ToList();
 
@@ -95,14 +95,14 @@ namespace AdminAPI.Controllers
         public DtoStudent? GetStudent(long studentId)
         {
             //var query = db.TStudent.Include(t => t.Course).AsQueryable();
-            
+
             var student = db.TStudent.Where(t => t.Id == studentId).Select(t => new DtoStudent
             {
                 Id = t.Id,
                 Name = t.Name,
                 CreateTime = t.CreateTime,
             }).FirstOrDefault();
-            
+
 
             //var student = db.TStudent
             //        .Include(t => t.Course) // 加載課程資料
@@ -140,9 +140,6 @@ namespace AdminAPI.Controllers
         public long CreateStudent(DtoEditStudent createStudent)
         {
 
-           
-  
-
 
             TStudent student = new()
             {
@@ -152,7 +149,7 @@ namespace AdminAPI.Controllers
                 Gender = (TStudent.EnumGender)createStudent.Gender,
                 Phone = createStudent.Phone,
                 //CourseId = studentCourse.Id,
-
+                CreateUserId = userId,
 
             };
 
@@ -177,7 +174,7 @@ namespace AdminAPI.Controllers
         {
             var student = db.TStudent.Where(t => t.Id == studentId).FirstOrDefault();
 
-          
+
 
             if (student != null)
             {
@@ -187,11 +184,6 @@ namespace AdminAPI.Controllers
                 student.Phone = updateStudent.Phone;
                 //student.CourseId = updateStudent.CourseId;                
                 student.UpdateUserId = userId;
-                
-        {
-
-        }
-
 
                 db.SaveChanges();
             }

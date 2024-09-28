@@ -26,7 +26,7 @@ namespace Repository.Database
 
 
 
-        public DbSet<TClass> TClass { get; set; }
+
 
 
         public DbSet<TCourse> TCourse { get; set; }
