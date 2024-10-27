@@ -17,11 +17,22 @@
         <Table TItem="DtoCategory" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
 
             <ColumnDefinitions>
-                <Column @bind-Field="@context.Name" Title="名称"></Column>
+
+                <PropertyColumn Title="名称" Property="c=>c.Name"></PropertyColumn>
+                <PropertyColumn Title="备注" Property="c=>c.Remarks"></PropertyColumn>
+                <PropertyColumn Title="父级栏目" Property="c=>c.ParentName"></PropertyColumn>
+                <PropertyColumn Title="排序" Property="c=>c.Sort"></PropertyColumn>
+                <PropertyColumn Title="创建时间" Property="c=>c.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm"></PropertyColumn>
+
+
+
+               @*  <Column @bind-Field="@context.Name" Title="名称"></Column>
                 <Column @bind-Field="@context.Remarks" Title="备注"></Column>
                 <Column @bind-Field="@context.ParentName" Title="父级栏目"></Column>
                 <Column @bind-Field="@context.Sort" Title="排序"></Column>
-                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间"></Column>
+                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间"></Column> *@
+
+
                 <ActionColumn Title="操作">
                     <Space>
 

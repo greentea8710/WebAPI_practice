@@ -16,13 +16,23 @@
         <Table TItem="DtoUser" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
 
             <ColumnDefinitions>
-                <Column @bind-Field="@context.Name" Title="名称"></Column>
+
+                <PropertyColumn Title="名称" Property="c=>c.Name"></PropertyColumn>
+                <PropertyColumn Title="用户名" Property="c=>c.UserName"></PropertyColumn>
+                <PropertyColumn Title="电话" Property="c=>c.Phone"></PropertyColumn>
+                <PropertyColumn Title="邮箱" Property="c=>c.Email"></PropertyColumn>
+                <PropertyColumn Title="角色" Property="c=>c.Roles"></PropertyColumn>
+                <PropertyColumn Title="创建时间" Property="c=>c.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm"></PropertyColumn>
+
+
+                @* <Column @bind-Field="@context.Name" Title="名称"></Column>
                 <Column @bind-Field="@context.UserName" Title="用户名"></Column>
                 <Column @bind-Field="@context.Phone" Title="电话"></Column>
                 <Column @bind-Field="@context.Email" Title="邮箱"></Column>
                 <Column @bind-Field="@context.Roles" Title="角色"></Column>
-                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间">
-                </Column>
+                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间"></Column> *@
+
+
                 <ActionColumn Title="操作">
                     <Space>
 
