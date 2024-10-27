@@ -18,13 +18,20 @@
         <Table TItem="DtoCourse" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
 
             <ColumnDefinitions>
-                <Column @bind-Field="@context.Name" Title="課程名称"></Column>
+                <PropertyColumn Title="課程名称" Property="c=>c.Name.SubstringText(10)"></PropertyColumn>
+                <PropertyColumn Title="課程名称" Property="c=>c.StudentTotal"></PropertyColumn>
+                <PropertyColumn Title="課程名称" Property="c=>c.MaleStudentTotal"></PropertyColumn>
+                <PropertyColumn Title="課程名称" Property="c=>c.FemaleStudentTotal"></PropertyColumn>
+                <PropertyColumn Title="課程名称" Property="c=>c.Grade"></PropertyColumn>
+                <PropertyColumn Title="创建时间" Property="c=>c.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm"></PropertyColumn>
+
+
+               @*  <Column @bind-Field="@context.Name" Title="課程名称"></Column>
                 <Column @bind-Field="@context.StudentTotal" Title="學生總數"></Column>
                 <Column @bind-Field="@context.MaleStudentTotal" Title="男性人數"></Column>
                 <Column @bind-Field="@context.FemaleStudentTotal" Title="女性人數"></Column>
                 <Column @bind-Field="@context.Grade" Title="年級"></Column>
-                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间">
-                </Column>
+                <Column Field="@context.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm" Title="创建时间"></Column> *@
                 <ActionColumn Title="操作">
                     <Space>
 

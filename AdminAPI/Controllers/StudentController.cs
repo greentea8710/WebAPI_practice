@@ -53,13 +53,6 @@ namespace AdminAPI.Controllers
 
             var query = db.TStudent.Where(t => t.Course != null);
 
-
-            // 加入 Include 來同時載入學生的班級 (Course) 資料
-            //var query = db.TStudent
-            //              .Include(s => s.Course)  
-            //              .AsQueryable();
-
-
             data.Total = query.Count();
 
             data.List = query.OrderByDescending(t => t.CreateTime).Select(t => new DtoStudent
@@ -139,8 +132,6 @@ namespace AdminAPI.Controllers
         [HttpPost]
         public long CreateStudent(DtoEditStudent createStudent)
         {
-
-
             TStudent student = new()
             {
                 Id = idService.GetId(),
@@ -148,9 +139,8 @@ namespace AdminAPI.Controllers
                 Number = createStudent.Number,
                 Gender = (TStudent.EnumGender)createStudent.Gender,
                 Phone = createStudent.Phone,
-                //CourseId = studentCourse.Id,
+                CourseId = 180564009272131584,
                 CreateUserId = userId,
-
             };
 
             db.TStudent.Add(student);

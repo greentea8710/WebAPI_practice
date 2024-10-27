@@ -48,27 +48,18 @@ namespace AdminShared.Models.Student
         public DateTimeOffset CreateTime { get; set; }
 
 
+        //#################################################################
 
-
-        /////////////////////////////////////////////////////////////////////////
-
-        // 包含班級資訊
+        /// <summary>
+        /// 包含班級資訊
+        /// </summary>
         public DtoCourse Course { get; set; }
 
+        //#################################################################
 
 
 
-        /*
-        /// <summary>
-        /// 所屬班級Id
-        /// </summary>
-        public long CourseId { get; set; }
 
-
-
-        public virtual TCourse Course { get; set; }
-
-        */
 
 
     }
