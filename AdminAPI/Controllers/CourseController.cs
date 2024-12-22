@@ -66,6 +66,18 @@ namespace AdminAPI.Controllers
         }
 
 
+        [HttpGet]
+        public List<DtoCourseSelect> GetCourseSelectList()
+        {
+            var list = db.TCourse.Select(t => new DtoCourseSelect
+            {
+                Id = t.Id,
+                Name = t.Name
+            }).ToList();
+
+            return list;
+        }
+
 
         /// <summary>
         /// 获取班級管理
@@ -84,7 +96,6 @@ namespace AdminAPI.Controllers
 
             return course;
         }
-
 
 
 
@@ -136,7 +147,7 @@ namespace AdminAPI.Controllers
                 course.FemaleStudentTotal = updateCourse.FemaleStudentTotal;
                 course.Grade = updateCourse.Grade;
                 course.UpdateUserId = userId;
-               
+
 
                 db.SaveChanges();
             }

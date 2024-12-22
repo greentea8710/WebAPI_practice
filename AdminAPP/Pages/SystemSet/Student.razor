@@ -1,7 +1,9 @@
 ﻿@page "/systemset/student"
+@using AdminShared.Models.Course
 @using AdminShared.Models.Student
 @using System.ComponentModel
 @using System.Text.Json
+@using Repository.Database
 @attribute [ReuseTabsPageTitle("學生管理")]
 
 <Layout Style="padding-top:30px;">
@@ -10,51 +12,43 @@
 
         <div style="margin-bottom:10px">
 
-
             <Button Icon="plus" Type="@ButtonType.Primary" @onclick="()=>EditStudent()">添加</Button>
 
-
         </div>
+
+
         <Table TItem="DtoStudent" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
 
             <ColumnDefinitions>
 
-                <PropertyColumn Title="學生名称" Property="c=>c.Name.SubstringText(10)"></PropertyColumn>
+                <PropertyColumn Title="學生名稱" Property="c=>c.Name.SubstringText(10)"></PropertyColumn>
                 <PropertyColumn Title="座號" Property="c=>c.Number.SubstringText(10)"></PropertyColumn>
                 <PropertyColumn Title="電話" Property="c=>c.Phone.SubstringText(10)"></PropertyColumn>
                 <PropertyColumn Title="性別" Property="c=>c.Gender"></PropertyColumn>
                 <PropertyColumn Title="班級" Property="c=>c.Course.Name"></PropertyColumn>
-                <PropertyColumn Title="创建时间" Property="c=>c.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm"></PropertyColumn>
+                <PropertyColumn Title="創建時間" Property="c=>c.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm"></PropertyColumn>
 
 
                 <ActionColumn Title="操作">
 
-
                     <Space>
-
-
                         <SpaceItem>
-                            <a @onclick="()=>EditStudent(context)">编辑</a>
+                            <a @onclick="()=>EditStudent(context)">編輯</a>
                         </SpaceItem>
 
 
-
                         <SpaceItem>
-                            <Popconfirm Title="确认要删除吗？"
+                            <Popconfirm Title="確認要刪除吗？"
                                         OnConfirm="_=>DeleteStudent(context.Id)"
                                         OkText="Yes"
                                         CancelText="No">
                                 <a style="color:red">删除</a>
                             </Popconfirm>
-
                         </SpaceItem>
-
-
                     </Space>
 
-
-
                 </ActionColumn>
+
             </ColumnDefinitions>
 
             <PaginationTemplate>
@@ -69,52 +63,98 @@
 </Layout>
 
 
-<Drawer Closable="true" Width="380" Visible="isShowEditStudent" Title='("學生管理信息")' OnClose="()=>isShowEditStudent=false">
-    <Template style="height:90%">
+@{
+    RenderFragment editFooter = @<Template>
+        <Button Type="@ButtonType.Primary" @onclick="()=>SaveStudent()" Loading="@saveLoading">保存</Button>
+        <Button Type="@ButtonType.Default" @onclick="()=>isShowEditStudent=false">取消</Button>
+    </Template>;
+}
 
-        <Form Model="@editStudent" OnFinish="SaveStudent">
 
-            <FormItem>
-                <Text>學生名称</Text>
-                <Input Placeholder="请输入學生名称" @bind-Value="@context.Name" />
-            </FormItem>
+<!-- Modal 彈出窗口，包含 Dropdown、FormModel) -->
+<Modal Title='學生管理信息' Style="width:1160px" Visible="@isShowEditStudent" OnCancel="()=>isShowEditStudent=false" Footer="@editFooter">
+    @* 要用 OnCancel ， 不能用 OnClose !!!! *@      @* OnClose：控制 Modal 的顯示和隱藏 *@
 
-            <FormItem>
-                <Text>座號</Text>
-                <Input Placeholder="请输入座號" @bind-Value="@context.Number" />
-            </FormItem>
+    <Form Model="@editStudent" OnFinish="SaveStudent">
 
-            <FormItem>
-                <Text>電話</Text>
-                <Input Placeholder="请输入電話" @bind-Value="@context.Phone" />
-            </FormItem>
+        <FormItem>
+            <Text>學生名稱</Text>
+            <Input Placeholder="請輸入學生名稱" @bind-Value="@context.Name" />
+        </FormItem>
 
-            <FormItem>
-                <Text>性別</Text>
-                <Input Placeholder="请输入性別" @bind-Value="@context.Gender" />
-            </FormItem>
-            
-            @* <FormItem>
-                <Text>班級</Text>
-                <Input Placeholder="请输入班級" @bind-Value="@context." />
-            </FormItem> *@
+        <FormItem>
+            <Text>座號</Text>
+            <Input Placeholder="請輸入座號" @bind-Value="@context.Number" />
+        </FormItem>
 
-              
+        <FormItem>
+            <Text>電話</Text>
+            <Input Placeholder="請輸入電話" @bind-Value="@context.Phone" />
+        </FormItem>
 
-            <Row Gutter="24">
-                <AntDesign.Col Span="24">
-                    <div style="float:right">
-                        <Button Type="@ButtonType.Primary" HtmlType="submit" Loading="@saveLoading">保存</Button>
-                        <Button Type="@ButtonType.Default" @onclick="()=>isShowEditStudent=false">取消</Button>
-                    </div>
-                </AntDesign.Col>
-            </Row>
-        </Form>
-    </Template>
-</Drawer>
+        <FormItem>
+            <Text>性別</Text>
+            <Input Placeholder="請輸入性別" @bind-Value="@context.Gender" />
+        </FormItem>
+
+
+        <FormItem>
+            <Text>班級</Text>
+            <Select DataSource="@courseSelects" ValueName="@nameof(DtoCourseSelect.Id)" TItem="DtoCourseSelect" TItemValue="long" LabelName="@nameof(DtoCourseSelect.Name)"  Style="width:120px">         </Select>   
+        </FormItem>
+
+    </Form>
+
+
+
+</Modal>
+
 
 
 @code {
+
+    //----------------目的:下拉選單與班級表同步-------------------
+
+    // 存放從 API 獲得的班級列表
+    //private List<TCourse>? _courses = new List<TCourse>();
+
+    private List<string> courseNames = new List<string>();
+
+
+    // 當頁面初始化時，從 API 獲取班級資料
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourseNameAsync();
+    }
+
+    // 從 API 請求班級列表的非同步方法
+    private async Task LoadCourseNameAsync()
+    {
+        try
+        {
+            // 發送 GET 請求至 API 取得班級資料
+            var courseNames = await Http.GetFromJsonAsync<List<string>>("api/Course/names") ?? new List<string>();
+
+            // 強制頁面刷新
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading courses: {ex.Message}");
+        }
+    }
+
+    // 當選擇班級時觸發的事件處理方法
+    private void OnCourseSelected(string courseName)
+    {
+        Console.WriteLine($"Selected course: {courseName}");
+        // 此處可進行其他操作，如更新選擇狀態
+    }
+
+
+    //------------------------到此結束----------------------------
+
+
 
     override protected void OnInitialized()
     {
@@ -127,6 +167,8 @@
     int pageSize = 10;
 
     DtoPageList<DtoStudent> pageList = new();
+
+    List<DtoCourseSelect> courseSelects = new();
 
     async void GetStudentList()
     {
@@ -144,6 +186,19 @@
     }
 
 
+    async void GetCourseSelectList()
+    {
+        tableLoading = true;
+        var retData = await Http.GetFromJsonAsync<List<DtoCourseSelect>>("Course/GetCourseSelectList");
+
+        if (retData != null)
+        {
+            courseSelects = retData;
+        }
+
+        StateHasChanged();
+
+    }
 
 
     void PageChange(PaginationEventArgs args)
@@ -165,12 +220,13 @@
 
 
     bool isShowEditStudent = false;
-
     long studentId;
     DtoEditStudent editStudent = new();
 
     void EditStudent(DtoStudent? student = null)
     {
+        GetCourseSelectList();
+
         studentId = default;
         editStudent = new DtoEditStudent();
 
@@ -181,13 +237,13 @@
             editStudent.Number = student.Number;
             editStudent.Phone = student.Phone;
             editStudent.Gender = student.Gender;
-            //editStudent.CourseId = student.CourseId;
         }
 
         isShowEditStudent = true;
 
         StateHasChanged();
     }
+
 
     async void SaveStudent()
     {
@@ -209,7 +265,7 @@
 
                 if (bool.Parse(updateStudentRet))
                 {
-                    Message.Success("编辑成功");
+                    Message.Success("編輯成功");
                 }
             }
         }
@@ -229,10 +285,9 @@
             if (Convert.ToBoolean(retValue))
             {
                 GetStudentList();
-                Message.Success("删除成功");
+                Message.Success("刪除成功");
             }
         }
 
     }
-
 }

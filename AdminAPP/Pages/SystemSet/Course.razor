@@ -18,15 +18,15 @@
         <Table TItem="DtoCourse" DataSource="@pageList.List" Total="@pageList.Total" Loading="tableLoading" RemoteDataSource>
 
             <ColumnDefinitions>
-                <PropertyColumn Title="課程名称" Property="c=>c.Name.SubstringText(10)"></PropertyColumn>
-                <PropertyColumn Title="課程名称" Property="c=>c.StudentTotal"></PropertyColumn>
-                <PropertyColumn Title="課程名称" Property="c=>c.MaleStudentTotal"></PropertyColumn>
-                <PropertyColumn Title="課程名称" Property="c=>c.FemaleStudentTotal"></PropertyColumn>
-                <PropertyColumn Title="課程名称" Property="c=>c.Grade"></PropertyColumn>
-                <PropertyColumn Title="创建时间" Property="c=>c.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm"></PropertyColumn>
+                <PropertyColumn Title="課程名稱" Property="c=>c.Name.SubstringText(10)"></PropertyColumn>
+                <PropertyColumn Title="學生總數" Property="c=>c.StudentTotal"></PropertyColumn>
+                <PropertyColumn Title="男性人數" Property="c=>c.MaleStudentTotal"></PropertyColumn>
+                <PropertyColumn Title="女性人數" Property="c=>c.FemaleStudentTotal"></PropertyColumn>
+                <PropertyColumn Title="年級" Property="c=>c.Grade"></PropertyColumn>
+                <PropertyColumn Title="創建時間" Property="c=>c.CreateTime.LocalDateTime" Format="yyyy-MM-dd HH:mm"></PropertyColumn>
 
 
-               @*  <Column @bind-Field="@context.Name" Title="課程名称"></Column>
+                @*  <Column @bind-Field="@context.Name" Title="課程名称"></Column>
                 <Column @bind-Field="@context.StudentTotal" Title="學生總數"></Column>
                 <Column @bind-Field="@context.MaleStudentTotal" Title="男性人數"></Column>
                 <Column @bind-Field="@context.FemaleStudentTotal" Title="女性人數"></Column>
@@ -37,13 +37,13 @@
 
 
                         <SpaceItem>
-                            <a @onclick="()=>EditCourse(context)">编辑</a>
+                            <a @onclick="()=>EditCourse(context)">編輯</a>
                         </SpaceItem>
 
 
 
                         <SpaceItem>
-                            <Popconfirm Title="确认要删除吗？"
+                            <Popconfirm Title="確認要删除吗？"
                                         OnConfirm="_=>DeleteCourse(context.Id)"
                                         OkText="Yes"
                                         CancelText="No">
@@ -75,28 +75,28 @@
         <Form Model="@editCourse" OnFinish="SaveCourse">
 
             <FormItem>
-                <Text>名称</Text>
-                <Input Placeholder="请输入名称" @bind-Value="@context.Name" />
+                <Text>名稱</Text>
+                <Input Placeholder="請輸入名稱" @bind-Value="@context.Name" />
             </FormItem>
 
             <FormItem>
                 <Text>學生總數</Text>
-                <Input Placeholder="请输入學生總數" @bind-Value="@context.StudentTotal" />
+                <Input Placeholder="請輸入學生總數" @bind-Value="@context.StudentTotal" />
             </FormItem>
 
             <FormItem>
                 <Text>男性人數</Text>
-                <Input Placeholder="请输入男性人數" @bind-Value="@context.MaleStudentTotal" />
+                <Input Placeholder="請輸入男性人數" @bind-Value="@context.MaleStudentTotal" />
             </FormItem>
 
             <FormItem>
                 <Text>女性人數</Text>
-                <Input Placeholder="请输入女性人數" @bind-Value="@context.FemaleStudentTotal" />
+                <Input Placeholder="請輸入女性人數" @bind-Value="@context.FemaleStudentTotal" />
             </FormItem>
 
             <FormItem>
                 <Text>年級</Text>
-                <Input Placeholder="请输入年級" @bind-Value="@context.Grade" />
+                <Input Placeholder="請輸入年級" @bind-Value="@context.Grade" />
             </FormItem>
 
 
@@ -127,6 +127,8 @@
     int pageSize = 10;
 
     DtoPageList<DtoCourse> pageList = new();
+
+   
 
     async void GetCourseList()
     {
@@ -180,7 +182,7 @@
             editCourse.Name = course.Name;
             editCourse.StudentTotal = course.StudentTotal;
             editCourse.MaleStudentTotal = course.MaleStudentTotal;
-            editCourse.FemaleStudentTotal = course.FemaleStudentTotal;     
+            editCourse.FemaleStudentTotal = course.FemaleStudentTotal;
         }
 
         isShowEditCourse = true;
